@@ -1,0 +1,7 @@
+name: quick
+description: Ricognizione lampo — solo risoluzione, probe HTTP e fingerprint tecnologico.
+steps:
+  - module: dns
+  - module: probe
+  - module: fingerprint
+    depends_on: [probe]

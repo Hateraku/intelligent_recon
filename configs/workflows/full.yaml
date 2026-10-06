@@ -1,0 +1,31 @@
+name: full
+description: Scansione completa — DNS, probe, fingerprint, discovery e anomaly (attivo con -active).
+steps:
+  - module: dns
+  - module: probe
+  - module: fingerprint
+    depends_on: [probe]
+  - module: discovery
+    depends_on: [probe]
+  # Famiglie cross-tech passive: lavorano sui dati del probe (header/cookie/body).
+  - module: security-headers
+    depends_on: [probe]
+  - module: secrets
+    depends_on: [probe]
+  # Dipende dalla discovery per EVIDENZA (gli URL scoperti arricchiscono il
+  # rilevamento, es. chunk App Router), non come gate: la discovery è una sorgente
+  # affidabile e la famiglia si auto-filtra comunque (la sua Analyze decide). Niente
+  # 'when' perché è passiva a costo ~0 — un gate darebbe solo falsi-negativi.
+  - module: react-family
+    depends_on: [discovery]
+  # WordPress: detection passiva + ricognizione mirata. Dipende dalla discovery
+  # per l'evidenza (URL con wp-content/plugins) e si auto-filtra se non è WP.
+  - module: wordpress
+    depends_on: [discovery]
+  # Famiglia cross-tech passiva: classifica i percorsi sensibili raggiungibili
+  # già sondati dalla discovery. Dipende dalla discovery (evidenza), si auto-filtra.
+  - module: exposure
+    depends_on: [discovery]
+  - module: anomaly
+    depends_on: [discovery]
+    when: active

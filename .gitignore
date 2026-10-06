@@ -1,0 +1,25 @@
+# Compiled binaries
+/recon
+/bin/
+/scanner
+/fuzzer
+/bughunt
+*.exe
+*.out
+*.test
+
+# Scan output
+/output/
+results.json
+*.report.json
+
+# Personal notes (not for the public repo)
+CLAUDE.md
+WHATTODO.me
+core_modules.txt
+how_use_*.txt
+
+# OS / editor
+.DS_Store
+*.swp
+*~

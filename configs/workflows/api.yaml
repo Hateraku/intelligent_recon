@@ -1,0 +1,9 @@
+name: api-focused
+description: Focalizzata su API — probe, discovery per enumerare endpoint, e anomaly attivo.
+steps:
+  - module: probe
+  - module: discovery
+    depends_on: [probe]
+  - module: anomaly
+    depends_on: [discovery]
+    when: active

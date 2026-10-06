@@ -539,12 +539,13 @@ func (m *Module) detectLanguages(body string, headers http.Header, result *Finge
 // detectCDN detects CDN and WAF
 func (m *Module) detectCDN(headers http.Header, result *FingerprintResult) {
 	cdnHeaders := map[string]string{
-		"cf-ray":         "Cloudflare",
-		"x-amz-cf-id":    "Amazon CloudFront",
-		"x-azure-ref":    "Azure CDN",
-		"akamai-x-cache": "Akamai",
-		"x-fastly-":      "Fastly",
-		"x-cdn":          "Generic CDN",
+		"cf-ray":          "Cloudflare",
+		"cf-cache-status": "Cloudflare",
+		"x-amz-cf-id":     "Amazon CloudFront",
+		"x-azure-ref":     "Azure CDN",
+		"akamai-x-cache":  "Akamai",
+		"x-fastly-":       "Fastly",
+		"x-cdn":           "Generic CDN",
 	}
 
 	for header, cdn := range cdnHeaders {
@@ -557,7 +558,7 @@ func (m *Module) detectCDN(headers http.Header, result *FingerprintResult) {
 
 	// WAF detection
 	wafHeaders := map[string]string{
-		"x-sucuri-id": "Sucuri",
+		"x-sucuri-id":    "Sucuri",
 		"x-mod-security": "ModSecurity",
 	}
 

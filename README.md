@@ -20,14 +20,13 @@ Rather than just enumerating hosts or firing isolated HTTP probes, it is built a
 
 ```
 cmd/
-  recon/      fast recon probe (DNS + HTTP + tech detection)
   bughunt/    full pipeline driven by the workflow engine
 pkg/
   core/       dns · discovery · fingerprint · anomaly
   vuln/       exposure · react · wordpress · secheaders · secrets · vulnclass (shared taxonomy)
   http/       stealth client and probe
   report/     HTML + Markdown report generators
-  subdomain/  plugins/   models/   tech/
+  plugins/    models/
 internal/
   workflow/   engine + config (YAML presets)
 configs/
@@ -47,32 +46,10 @@ Requires **Go 1.19+**.
 git clone https://github.com/Hateraku/intelligent-recon
 cd intelligent-recon
 
-go build -o bin/recon   ./cmd/recon
 go build -o bin/bughunt ./cmd/bughunt
 ```
 
 ## Usage
-
-### Fast recon probe
-
-```bash
-# single target, JSON output
-./bin/recon example.com --json
-
-# many targets from a file, 50 workers
-./bin/recon --input targets.txt --workers 50 --json
-```
-
-| Flag | | Description |
-|------|---|-------------|
-| `--input`   | `-i` | File with one target per line |
-| `--workers` | `-w` | Concurrent workers (default 4) |
-| `--timeout` | `-t` | HTTP timeout in seconds (default 7) |
-| `--json`    | `-j` | Output as JSON |
-| `--silent`  | `-s` | Errors only |
-| `--verbose` | `-v` | Verbose output |
-
-### Full pipeline
 
 > **Flags must come before the target(s).** `bughunt` parses options up to the
 > first positional argument, so `--workflow full example.com` works but
@@ -199,16 +176,33 @@ Findings also include severity (`critical`→`info`), the module that found them
 
 ## Example output
 
+Terminal summary (abridged):
+
+```
+▶️  example.com
+   🌐 [example.com] DNS: 4 IP, cloud=-
+   📡 [example.com] HTTP: 200 Example Domain (https://example.com)
+   🛡️  [example.com] security-headers: 5 problemi
+📊 Scan summary
+Vulnerabilità:   5
+   🎯 Top endpoint per rischio:
+    5.8  200  GET  https://example.com
+```
+
+A single finding from the JSON report (`--json`), part of the scan context:
+
 ```json
 {
-  "target": "example.com",
-  "ips": ["93.184.216.34"],
-  "status_code": 200,
-  "title": "Example Domain",
-  "server": "ECS",
-  "content_length": 1256,
-  "tech": ["Cloudflare"],
-  "error": null
+  "type": "security-header",
+  "severity": "medium",
+  "score": 5,
+  "title": "Content-Security-Policy assente",
+  "url": "https://example.com",
+  "evidence": "nessun header Content-Security-Policy",
+  "remediation": "Definire una CSP restrittiva.",
+  "references": [],
+  "found_by": "security-headers:csp-missing",
+  "metadata": { "class": "security-misconfiguration", "cwe": "CWE-693", "status": "confirmed" }
 }
 ```
 

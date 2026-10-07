@@ -4,6 +4,10 @@ A concurrent reconnaissance and web attack-surface analysis framework written in
 
 Rather than just enumerating hosts or firing isolated HTTP probes, it is built as a modular pipeline: a worker-pool engine feeds pluggable modules (DNS, HTTP probing, technology fingerprinting, content discovery, anomaly/vulnerability checks) that share a single scan context, so results from one stage inform the next. Workflows are described in YAML, so a scan is configuration, not code.
 
+I built it to stop stitching together a handful of separate recon tools by hand on every bug-bounty target, and to have one engine where each stage feeds the next instead of producing disconnected output. It is also where I work out how to design a concurrent, modular system in Go under real load — the recon problem is the excuse, the architecture is the point.
+
+> 🚧 **Work in progress.** The passive pipeline and the modules listed below are usable today; several components (see [`ROADMAP.md`](ROADMAP.md)) are still in active development and the APIs may change.
+
 > Built for **authorized** security testing, bug-bounty work and research. See the disclaimer below.
 
 ## Highlights
@@ -43,8 +47,8 @@ A detailed breakdown lives in [`ARCHITECTURE.md`](ARCHITECTURE.md); planned work
 Requires **Go 1.19+**.
 
 ```bash
-git clone https://github.com/Hateraku/intelligent-recon
-cd intelligent-recon
+git clone https://github.com/Hateraku/intelligent_recon
+cd intelligent_recon
 
 go build -o bin/bughunt ./cmd/bughunt
 ```
